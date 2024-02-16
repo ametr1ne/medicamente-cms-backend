@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Service {
+  id               Int      @id @default(autoincrement())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  name             String   @unique @db.VarChar(255)
+  published        Boolean  @default(false)
+  icon             String   @default("/uploads/default-service.png")
+  shortDescription String
+  longDescription  String
+  slug             String   @unique
+  specialists      Expert[]
+  prices           Price[]
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+}
+
+model Expert {
+  id                Int      @id @default(autoincrement())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  firstName         String   @db.VarChar(50)
+  lastName          String   @db.VarChar(50)
+  middleName        String   @db.VarChar(50)
+  slug              String   @unique
+  experienceInYears Int
+  photo             String   @default("/uploads/default-avatar.png")
+  rank              Int      @default(1)
+  service           Service? @relation(fields: [serviceId], references: [id])
+  serviceId         Int?
+  tags              String[]
+  specializations   String[]
+}
+
+model Price {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String   @db.VarChar(255) @unique
+  price     Int
+  oldPrice  Int
+  service   Service? @relation(fields: [serviceId], references: [id])
+  serviceId Int?
+}
