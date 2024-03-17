@@ -1,5 +1,5 @@
 import {
-    IsArray,
+  IsArray,
   IsNumber,
   IsOptional,
   IsString,
@@ -28,62 +28,56 @@ export class ExpertDto {
   slug: string;
 
   @IsOptional()
-  @IsString()
-  photo: string;
+  experienceInYears: string;
 
   @IsOptional()
-  @IsNumber()
-  experienceInYears: number;
+  rank: string;
 
   @IsOptional()
-  @IsNumber()
-  rank: number;
+  specializations: string;
 
   @IsOptional()
-  specializations: string[]
+  tags: string;
 
   @IsOptional()
-  tags: string[]
+  services: string;
 }
 
 export class ExpertUdpateDto {
-    @IsOptional()
-    @IsString()
-    @MinLength(1, { message: 'Lenght must be at least 1 character' })
-    @MaxLength(20, { message: 'Length cannnot be over 50 characters' })
-    firstName: string;
-  
-    @IsOptional()
-    @IsString()
-    @MinLength(1, { message: 'Lenght must be at least 1 character' })
-    @MaxLength(50, { message: 'Length cannnot be over 50 characters' })
-    lastName: string;
-  
-    @IsOptional()
-    @IsString()
-    @MinLength(1, { message: 'Lenght must be at least 1 character' })
-    @MaxLength(50, { message: 'Length cannnot be over 50 characters' })
-    middleName: string;
-  
-    @IsOptional()
-    @IsString()
-    slug: string;
-  
-    @IsOptional()
-    @IsString()
-    photo: string;
-  
-    @IsOptional()
-    @IsNumber()
-    experienceInYears: number;
-  
-    @IsOptional()
-    @IsNumber()
-    rank: number;
+  @IsOptional()
+  @IsString()
+  @MinLength(1, { message: 'Lenght must be at least 1 character' })
+  @MaxLength(20, { message: 'Length cannnot be over 50 characters' })
+  firstName: string;
 
-    @IsOptional()
-    specializations: string[]
-  
-    @IsOptional()
-    tags: string[]
-  }
+  @IsOptional()
+  @IsString()
+  @MinLength(1, { message: 'Lenght must be at least 1 character' })
+  @MaxLength(50, { message: 'Length cannnot be over 50 characters' })
+  lastName: string;
+
+  @IsOptional()
+  @IsString()
+  @MinLength(1, { message: 'Lenght must be at least 1 character' })
+  @MaxLength(50, { message: 'Length cannnot be over 50 characters' })
+  middleName: string;
+
+  @IsOptional()
+  @IsString()
+  slug: string;
+
+  @IsOptional()
+  experienceInYears: string;
+
+  @IsOptional()
+  rank: string;
+
+  @IsOptional()
+  specializations: string;
+
+  @IsOptional()
+  tags: string;
+
+  @IsOptional()
+  services: string;
+}

@@ -2,17 +2,29 @@ import {
   Body,
   Controller,
   Delete,
+  FileTypeValidator,
   Get,
   Param,
+  ParseFilePipe,
+  ParseFilePipeBuilder,
   Patch,
   Post,
   Put,
+  UploadedFile,
+  UploadedFiles,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { ServiceService } from './service.service';
 import { ServiceDto, UpdateServiceDto } from './dto/service.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
+import {
+  FileFieldsInterceptor,
+  FileInterceptor,
+} from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { uuid } from 'uuidv4';
 
 @Controller('service')
 export class ServiceController {
@@ -36,15 +48,93 @@ export class ServiceController {
   @Auth()
   @UsePipes(new ValidationPipe())
   @Post()
-  async create(@Body() dto: ServiceDto) {
-    return this.serviceService.create(dto);
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        {
+          name: 'icon',
+          maxCount: 1,
+        },
+        {
+          name: 'bannerImage',
+          maxCount: 1,
+        },
+      ],
+      {
+        storage: diskStorage({
+          destination: './static/services/',
+          filename: (req, file, cb) => {
+            const filename: string = uuid();
+            const extension = (file.originalname.match(/\.+[\S]+$/) || [])[0];
+
+            cb(null, `${filename}${extension}`);
+          },
+        }),
+      },
+    ),
+  )
+  async create(
+    @Body() dto: ServiceDto,
+    @UploadedFiles(
+      new ParseFilePipeBuilder().build({
+        fileIsRequired: false,
+      }),
+    )
+    files: {
+      icon?: Express.Multer.File[];
+      bannerImage?: Express.Multer.File[];
+    },
+  ) {
+    return this.serviceService.create(dto, files?.icon, files?.bannerImage);
   }
 
   @Auth()
   @UsePipes(new ValidationPipe())
   @Patch('/:id')
-  async update(@Body() dto: UpdateServiceDto, @Param('id') id: string) {
-    return this.serviceService.update(dto, Number(id));
+  @UseInterceptors(
+    FileFieldsInterceptor(
+      [
+        {
+          name: 'icon',
+          maxCount: 1,
+        },
+        {
+          name: 'bannerImage',
+          maxCount: 1,
+        },
+      ],
+      {
+        storage: diskStorage({
+          destination: './static/services/',
+          filename: (req, file, cb) => {
+            const filename: string = uuid();
+            const extension = (file.originalname.match(/\.+[\S]+$/) || [])[0];
+
+            cb(null, `${filename}${extension}`);
+          },
+        }),
+      },
+    ),
+  )
+  async update(
+    @Body() dto: UpdateServiceDto,
+    @Param('id') id: string,
+    @UploadedFiles(
+      new ParseFilePipe({
+        fileIsRequired: false,
+      }),
+    )
+    files: {
+      icon?: Express.Multer.File[];
+      bannerImage?: Express.Multer.File[];
+    },
+  ) {
+    return this.serviceService.update(
+      dto,
+      Number(id),
+      files?.icon,
+      files?.bannerImage,
+    );
   }
 
   @Auth()

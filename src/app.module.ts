@@ -7,9 +7,22 @@ import { UserModule } from './user/user.module';
 import { ServiceModule } from './service/service.module';
 import { ExpertModule } from './expert/expert.module';
 import { PriceModule } from './price/price.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
-  imports: [ ConfigModule.forRoot(), AuthModule, UserModule, ServiceModule, ExpertModule, PriceModule],
+  imports: [
+    ConfigModule.forRoot(),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'static'),
+      serveRoot: '/',
+    }),
+    AuthModule,
+    UserModule,
+    ServiceModule,
+    ExpertModule,
+    PriceModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

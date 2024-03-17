@@ -11,7 +11,11 @@ export class PriceService {
   constructor(private prisma: PrismaService) {}
 
   async getAll() {
-    return this.prisma.price.findMany();
+    return this.prisma.price.findMany({
+      orderBy: {
+        createdAt: "asc"
+      }
+    });
   }
 
   async getOneById(id: number) {
@@ -46,7 +50,9 @@ export class PriceService {
       where: { name: data.name },
     });
 
-    if (nameIsNotUnique) throw new BadRequestException('Name should be unique');
+    if (nameIsNotUnique && isExists.name !== nameIsNotUnique.name) {
+      throw new BadRequestException('Name should be unique');
+    }
 
     return this.prisma.price.update({
       where: { id },

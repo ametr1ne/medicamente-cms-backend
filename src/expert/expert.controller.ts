@@ -2,16 +2,23 @@ import {
   Body,
   Controller,
   Delete,
+  FileTypeValidator,
   Get,
   Param,
+  ParseFilePipe,
   Patch,
   Post,
+  UploadedFile,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { ExpertService } from './expert.service';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { ExpertDto, ExpertUdpateDto } from './dto/expert.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { uuid } from 'uuidv4';
 
 @Controller('expert')
 export class ExpertController {
@@ -29,25 +36,66 @@ export class ExpertController {
 
   @Get('/slug/:slug')
   async getOneBySlug(@Param('slug') slug: string) {
-    return this.expertService.getOneById(Number(slug));
+    return this.expertService.getOneBySlug(slug);
   }
 
   @Auth()
   @UsePipes(new ValidationPipe())
   @Post()
-  async create(@Body() dto: ExpertDto) {
-    return this.expertService.create(dto);
+  @UseInterceptors(
+    FileInterceptor('photo', {
+      storage: diskStorage({
+        destination: './static/experts/',
+        filename: (req, file, cb) => {
+          const filename: string = uuid();
+          const extension = (file.originalname.match(/\.+[\S]+$/) || [])[0];
+
+          cb(null, `${filename}${extension}`);
+        },
+      }),
+    }),
+  )
+  async create(
+    @Body() dto: ExpertDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' })],
+        fileIsRequired: false,
+      }),
+    )
+    photo?: Express.Multer.File,
+  ) {
+    return this.expertService.create(dto, photo);
   }
 
   @Auth()
   @UsePipes(new ValidationPipe())
   @Patch('/:id')
-  async update(@Body() dto: ExpertUdpateDto, @Param('id') id: string) {
-    return this.expertService.update(dto, Number(id));
+  @UseInterceptors(
+    FileInterceptor('photo', {
+      storage: diskStorage({
+        destination: './static/experts/',
+        filename: (req, file, cb) => {
+          const filename: string = uuid();
+          const extension = (file.originalname.match(/\.+[\S]+$/) || [])[0];
+
+          cb(null, `${filename}${extension}`);
+        },
+      }),
+    }),
+  )
+  async update(@Body() dto: ExpertUdpateDto, @Param('id') id: string, @UploadedFile(
+    new ParseFilePipe({
+      validators: [new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' })],
+      fileIsRequired: false,
+    }),
+  )
+  photo?: Express.Multer.File,) {
+    return this.expertService.update(dto, Number(id), photo);
   }
 
   @Auth()
-  @Delete('/delete/:id')
+  @Delete('/:id')
   async delete(@Param('id') id: string) {
     return this.expertService.delete(Number(id));
   }
