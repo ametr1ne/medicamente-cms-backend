@@ -13,8 +13,8 @@ export class PriceService {
   async getAll() {
     return this.prisma.price.findMany({
       orderBy: {
-        createdAt: "asc"
-      }
+        createdAt: 'asc',
+      },
     });
   }
 

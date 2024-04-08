@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
@@ -9,6 +7,7 @@ import { ExpertModule } from './expert/expert.module';
 import { PriceModule } from './price/price.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { AppointmentModule } from './appointment/appointment.module';
 
 @Module({
   imports: [
@@ -22,8 +21,7 @@ import { join } from 'path';
     ServiceModule,
     ExpertModule,
     PriceModule,
+    AppointmentModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
