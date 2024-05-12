@@ -95,6 +95,13 @@ export class ExpertController {
   }
 
   @Auth()
+  @UsePipes(new ValidationPipe())
+  @Patch('/assign-dates/:id')
+  async assignDates(@Body() body: string[], @Param('id') id: string) {
+    return this.expertService.assignDates(body, Number(id));
+  }
+
+  @Auth()
   @Delete('/:id')
   async delete(@Param('id') id: string) {
     return this.expertService.delete(Number(id));

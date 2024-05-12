@@ -25,7 +25,11 @@ export class ExpertService {
         experienceInYears: Number(dto.experienceInYears),
         rank: Number(dto.rank),
         photo: photo ? photo.filename : null,
-        specializations: JSON.parse(dto.specializations),
+        specializations: {
+          connect: JSON.parse(dto.specializations).map((item) => {
+            return { id: Number(item) };
+          }),
+        },
         tags: JSON.parse(dto.tags),
         services: {
           connect:
@@ -78,7 +82,11 @@ export class ExpertService {
         photo: photo ? photo.filename : isExists.photo,
         experienceInYears: Number(dto.experienceInYears),
         rank: Number(dto.rank),
-        specializations: JSON.parse(dto.specializations),
+        specializations: {
+          connect: JSON.parse(dto.specializations).map((item) => {
+            return { id: Number(item) };
+          }),
+        },
         tags: JSON.parse(dto.tags),
         services: {
           connect:
@@ -87,6 +95,23 @@ export class ExpertService {
               id: Number(service),
             })),
         },
+      },
+    });
+  }
+
+  async assignDates(dates: string[], id: number) {
+    const isExists = await this.prisma.expert.findUnique({ where: { id } });
+
+    if (!isExists) throw new NotFoundException('Not found expert with same id');
+
+    if (dates.length > 90) {
+      dates.slice(-90);
+    }
+
+    return this.prisma.expert.update({
+      where: { id },
+      data: {
+        recordDates: dates,
       },
     });
   }
@@ -106,6 +131,7 @@ export class ExpertService {
       where,
       include: {
         services: true,
+        specializations: true,
       },
     });
   }

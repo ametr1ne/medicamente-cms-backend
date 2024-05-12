@@ -35,20 +35,28 @@ model User {
 }
 
 model Expert {
-  id                Int           @id @default(autoincrement())
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
-  firstName         String        @db.VarChar(50)
-  lastName          String        @db.VarChar(50)
-  middleName        String?       @db.VarChar(50)
-  slug              String        @unique
+  id                Int              @id @default(autoincrement())
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  firstName         String           @db.VarChar(50)
+  lastName          String           @db.VarChar(50)
+  middleName        String?          @db.VarChar(50)
+  slug              String           @unique
   experienceInYears Int?
   photo             String?
   rank              Int?
   services          Service[]
   tags              String[]
-  specializations   String[]
+  specializations   Specialization[]
   appointments      Appointment[]
+  recordDates       String[]         @default([])
+}
+
+model RecordTime {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  time      String   @unique
 }
 
 model Price {
@@ -65,12 +73,20 @@ model Appointment {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  name      String
-  lastName  String
+  fullname  String
   phone     String
+  email     String
   birthDate String
-  date      DateTime
+  date      DateTime @unique
   confirmed Boolean  @default(false)
   expert    Expert   @relation(fields: [expertId], references: [id])
   expertId  Int
+}
+
+model Specialization {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String   @unique
+  experts   Expert[]
 }

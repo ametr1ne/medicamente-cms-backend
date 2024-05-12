@@ -34,6 +34,7 @@ export class ExpertDto {
   rank: string;
 
   @IsOptional()
+  @IsString({ each: true })
   specializations: string;
 
   @IsOptional()
@@ -73,6 +74,7 @@ export class ExpertUdpateDto {
   rank: string;
 
   @IsOptional()
+  @IsString({ each: true })
   specializations: string;
 
   @IsOptional()

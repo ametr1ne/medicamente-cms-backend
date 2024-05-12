@@ -33,6 +33,14 @@ export class AppointmentService {
   }
 
   async create(data: AppointmentCreateDto) {
+    const isExists = await this.prisma.appointment.findUnique({
+      where: {
+        date: data.date,
+      },
+    });
+
+    if (isExists) throw new BadRequestException('This date is already booked');
+
     return this.prisma.appointment.create({
       data: { ...data, expertId: Number(data.expertId) },
     });
