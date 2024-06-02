@@ -47,6 +47,9 @@ export class ExpertService {
       orderBy: {
         createdAt: 'asc',
       },
+      include: {
+        appointments: true,
+      },
     });
   }
 
